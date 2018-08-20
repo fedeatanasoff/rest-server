@@ -5,7 +5,28 @@ const bcrypt = require("bcrypt");
 const _ = require("underscore");
 
 app.get("/usuario", (req, res) => {
-  res.json("get usuario local");
+  let desde = req.query.desde || 0;
+  desde = Number(desde);
+
+  let limite = req.query.limite || 5;
+  limite = Number(limite);
+
+  Usuario.find({})
+    .skip(desde)
+    .limit(limite)
+    .exec((err, usuarios) => {
+      if (err) {
+        return res.status(400).json({
+          ok: false,
+          err: err
+        });
+      }
+
+      res.json({
+        ok: true,
+        usuarios: usuarios
+      });
+    });
 });
 
 app.post("/usuario", (req, res) => {
