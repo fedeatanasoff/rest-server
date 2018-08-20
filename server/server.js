@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(require("./routes/usuario"));
 
 mongoose.connect(
-  "mongodb://localhost:27017/coffe",
+  process.env.URLDB,
   { useNewUrlParser: true },
   (err, data) => {
     if (err) throw err;
@@ -22,4 +22,6 @@ mongoose.connect(
   }
 );
 
-app.listen(process.env.PORT, () => console.log("escuchando desde puerto 3000"));
+app.listen(process.env.PORT, () =>
+  console.log("escuchando desde puerto", process.env.PORT)
+);
