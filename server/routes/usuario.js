@@ -22,9 +22,12 @@ app.get("/usuario", (req, res) => {
         });
       }
 
-      res.json({
-        ok: true,
-        usuarios: usuarios
+      Usuario.count({}, (err, cant) => {
+        res.json({
+          ok: true,
+          usuarios: usuarios,
+          cantidad: cant
+        });
       });
     });
 });
