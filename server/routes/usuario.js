@@ -11,7 +11,7 @@ app.get("/usuario", (req, res) => {
   let limite = req.query.limite || 5;
   limite = Number(limite);
 
-  Usuario.find({}, "nombre email role estado google img")
+  Usuario.find({ estado: true }, "nombre email role estado google img")
     .skip(desde)
     .limit(limite)
     .exec((err, usuarios) => {
@@ -22,7 +22,7 @@ app.get("/usuario", (req, res) => {
         });
       }
 
-      Usuario.count({}, (err, cant) => {
+      Usuario.count({ estado: true }, (err, cant) => {
         res.json({
           ok: true,
           usuarios: usuarios,
@@ -83,29 +83,53 @@ app.put("/usuario/:id", (req, res) => {
 
 app.delete("/usuario/:id", (req, res) => {
   let id = req.params.id;
+  let estado = {
+    estado: false
+  };
 
-  Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
-    if (err) {
-      return res.status(400).json({
-        ok: false,
-        err: err
+  Usuario.findByIdAndUpdate(
+    id,
+    estado,
+    { new: true, context: "query" },
+    (err, usuarioDB) => {
+      if (err) {
+        return res.status(400).json({
+          ok: false,
+          err: err
+        });
+      }
+
+      // console.log(`Se ha actualizado el usuario ${id}`);
+      res.json({
+        ok: true,
+        usuario: usuarioDB,
+        message: "estado OFFLINE"
       });
     }
+  );
 
-    if (usuarioBorrado === null) {
-      return res.status(400).json({
-        ok: false,
-        error: {
-          message: "Usuario no encontrado"
-        }
-      });
-    }
+  // Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
+  //   if (err) {
+  //     return res.status(400).json({
+  //       ok: false,
+  //       err: err
+  //     });
+  //   }
 
-    res.json({
-      ok: true,
-      usuario: usuarioBorrado
-    });
-  });
+  //   if (usuarioBorrado === null) {
+  //     return res.status(400).json({
+  //       ok: false,
+  //       error: {
+  //         message: "Usuario no encontrado"
+  //       }
+  //     });
+  //   }
+
+  //   res.json({
+  //     ok: true,
+  //     usuario: usuarioBorrado
+  //   });
+  // });
 });
 
 module.exports = app;
