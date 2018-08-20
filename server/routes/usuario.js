@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const Usuario = require("../models/usuario");
+const bcrypt = require("bcrypt");
 
 app.get("/usuario", (req, res) => {
   res.json("get usuario local");
@@ -10,7 +11,7 @@ app.post("/usuario", (req, res) => {
   let usuario = new Usuario({
     nombre: req.body.nombre,
     email: req.body.email,
-    password: req.body.password,
+    password: bcrypt.hashSync(req.body.password, 10),
     role: req.body.role
   });
 
