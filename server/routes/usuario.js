@@ -1,21 +1,32 @@
 const express = require("express");
 const app = express();
+const Usuario = require("../models/usuario");
 
 app.get("/usuario", (req, res) => {
   res.json("get usuario local");
 });
 
 app.post("/usuario", (req, res) => {
-  if (req.body.nombre === undefined) {
-    res.status(400).json({
-      ok: false,
-      msg: " el nombre es necesario"
-    });
-  } else {
+  let usuario = new Usuario({
+    nombre: req.body.nombre,
+    email: req.body.email,
+    password: req.body.password,
+    role: req.body.role
+  });
+
+  usuario.save((err, usuarioDB) => {
+    if (err) {
+      return res.status(400).json({
+        ok: false,
+        err: err
+      });
+    }
+
     res.json({
-      persona: req.body
+      ok: true,
+      usuario: usuarioDB
     });
-  }
+  });
 });
 
 app.put("/usuario/id", (req, res) => {
