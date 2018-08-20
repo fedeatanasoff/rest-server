@@ -23,6 +23,7 @@ app.post("/usuario", (req, res) => {
       });
     }
 
+    console.log(`Se ha insertado el usuario: \n ${usuarioDB}`);
     res.json({
       ok: true,
       usuario: usuarioDB
@@ -30,8 +31,24 @@ app.post("/usuario", (req, res) => {
   });
 });
 
-app.put("/usuario/id", (req, res) => {
-  res.json("put usuario");
+app.put("/usuario/:id", (req, res) => {
+  let id = req.params.id;
+  let body = req.body;
+
+  Usuario.findByIdAndUpdate(id, body, { new: true }, (err, usuarioDB) => {
+    if (err) {
+      return res.status(400).json({
+        ok: false,
+        err: err
+      });
+    }
+
+    console.log(`Se ha actualizado el usuario ${id}`);
+    res.json({
+      ok: true,
+      usuario: usuarioDB
+    });
+  });
 });
 
 app.delete("/usuario", (req, res) => {
